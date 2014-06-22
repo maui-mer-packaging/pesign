@@ -1,0 +1,55 @@
+Name        : pesign
+Version     : 0.108
+Release     : 1
+Group       : Development/System
+License     : GPLv2
+Summary     : Signing utility for UEFI binaries
+Description : |
+  This package contains the pesign utility for signing UEFI binaries as
+  well as other associated tools.
+URL         : https://github.com/vathpela/pesign
+Sources     :
+    - "%{name}-%{version}.tar.xz"
+Patches:
+    - 0001-Don-t-set-SO_PASSCRED.patch
+SetupOptions: -q -n %{name}-%{version}/upstream
+ExclusiveArch: i686 x86_64 ia64
+
+PkgBR:
+    - nspr nss nss-util popt-devel
+    - coolkey
+    - opensc
+    - nss-tools
+    - nspr-devel >= 4.9.2
+    - nss-devel >= 3.13.6
+    - systemd
+Requires:
+    - nspr nss nss-util popt rpm coolkey opensc
+
+RequiresPre:
+    - shadow-utils
+RequiresPost:
+    - systemd
+RequiresPreUn:
+    - systemd
+RequiresPostUn:
+    - systemd
+
+Configure: none
+Builder: none
+
+Files:
+    - "%doc README TODO COPYING"
+    - "%{_bindir}/pesign"
+    - "%{_bindir}/pesign-client"
+    - "%{_bindir}/efikeygen"
+    - "%{_sysconfdir}/popt.d/pesign.popt"
+    - "%{_sysconfdir}/rpm/macros.pesign"
+    - "%{_mandir}/man*/*"
+    - "%dir %attr(0775,pesign,pesign) /etc/pki/pesign"
+    - "%attr(0664,pesign,pesign) /etc/pki/pesign/*"
+    - "%dir %attr(0770, pesign, pesign) %{_localstatedir}/run/%{name}"
+    - "%ghost %attr(0660, -, -) %{_localstatedir}/run/%{name}/socket"
+    - "%ghost %attr(0660, -, -) %{_localstatedir}/run/%{name}/pesign.pid"
+    - "%{_prefix}/lib/tmpfiles.d/pesign.conf"
+    - "%{_unitdir}/pesign.service"
